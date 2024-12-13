@@ -1,48 +1,59 @@
 import React, { useState } from 'react';
-import { getTimezone } from '../api/api';
+import axios from 'axios';
+
 
 const TimezoneDisplay = () => {
-  const [lat, setLat] = useState('');
-  const [lng, setLng] = useState('');
+  const [city, setCity] = useState('');
   const [timezone, setTimezone] = useState(null);
   const [error, setError] = useState('');
 
   const handleGetTimezone = async () => {
     setError('');
     try {
-      const timestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
-      const data = await getTimezone(lat, lng, timestamp);
-      setTimezone(data);
+      // Make a request to your backend with the city name
+      const response = await axios.get(`https://freelancer-toolkit.onrender.com/api/timezones?location=${encodeURIComponent(city)}`);
+      
+      // If the response contains timezone data
+      if (response.data.timeZoneId && response.data.timeZoneName) {
+        setTimezone(response.data);
+      } else {
+        throw new Error('No timezone data found for the city.');
+      }
     } catch (error) {
-      setError('Failed to fetch timezone data.');
+      setError('Failed to fetch timezone data. Please try again.');
     }
   };
 
   return (
-    <section id="timezone">
-      <h2>Timezone Information</h2>
-      <div>
-        <input
-          type="text"
-          value={lat}
-          onChange={(e) => setLat(e.target.value)}
-          placeholder="Latitude"
-        />
-        <input
-          type="text"
-          value={lng}
-          onChange={(e) => setLng(e.target.value)}
-          placeholder="Longitude"
-        />
-        <button onClick={handleGetTimezone}>Get Timezone</button>
-      </div>
-      {timezone && (
-        <div>
-          <p>Timezone: {timezone.timeZoneName}</p>
-          <p>Timezone ID: {timezone.timeZoneId}</p>
+    <section id="timezone" className="container mt-5">
+      <h2 className="text-center mb-4">Timezone Information</h2>
+      <div className="row justify-content-center">
+        <div className="col-md-6 col-12">
+          {/* Flexbox to make the input and button not overlap */}
+          <div className="d-flex mb-3">
+            <input
+              type="text"
+              className="form-control me-2" // Add margin-end to separate input and button
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Enter city name"
+            />
+            <button className="btn btn-primary" onClick={handleGetTimezone}>
+              Get Timezone
+            </button>
+          </div>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {timezone && (
+            <div className="card mt-4">
+              <div className="card-body">
+                <h5 className="card-title">Timezone Details</h5>
+                <p className="card-text"><strong>Timezone:</strong> {timezone.timeZoneName}</p>
+                <p className="card-text"><strong>Timezone ID:</strong> {timezone.timeZoneId}</p>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-      {error && <p>{error}</p>}
+      </div>
     </section>
   );
 };
