@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://freelancer-toolkit.onrender.com'; // Your deployed backend URL
+const API_URL = 'https://freelancer-toolkit.onrender.com'; 
 
 // Fetch exchange rate for currency conversion
 export const getExchangeRate = async (from, to, amount = 1) => {
