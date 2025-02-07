@@ -54,3 +54,4 @@ API Integrations: Currency Exchange API, Places API, and Time Zone API
 
 ## Deployed Link
 https://freelancer-toolkit-frontend-react.vercel.app/
+
